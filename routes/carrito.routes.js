@@ -44,9 +44,10 @@ router.get('/listar/:id', (req, res) => {
 router.post('/guardar/:id', (req, res) => {
    
     let { id } = req.params;
-    const productop = productos.find(producto => producto.id == id)
-    if(productop){
-        res.json(productosCarrito.guardar(productop));
+    const producto = productos.buscarPorId(id)
+    if(producto){
+        productosCarrito.push(producto)
+        res.json(productosCarrito);
     let data = JSON.stringify(productosCarrito,null,2);
     fs.writeFileSync(rutaC, data, 'utf-8')
     }else{
