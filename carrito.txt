@@ -1,8 +1,0 @@
-{
-  "productos": [
-    {
-      "error": "producto con id 1 no encontrado",
-      "id": 1
-    }
-  ]
-}

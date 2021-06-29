@@ -1,13 +1,7 @@
 {
   "productos": [
     {
-      "name": "iphone",
-      "price": 19200.5,
-      "thumbnail": "link44",
-      "id": 1
-    },
-    {
-      "name": "iphone",
+      "name": "smartphone",
       "price": 19200.5,
       "thumbnail": "link44",
       "id": 2

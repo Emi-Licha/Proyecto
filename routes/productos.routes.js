@@ -4,9 +4,16 @@ import fs from 'fs';
 const router = express.Router();
 const ruta = "./productos.txt";
 
+
 let productos = new Productos;
 
-
+function auth(req, res, next){
+    if(req.query.admin === 'true'){
+        next()
+    }else{
+        res.send('No tiene autorizacion para ingresar a esta pagina')
+    }
+}
 router.get('/listar', (req, res) => {
     async function read(ruta) {
         try {
@@ -25,14 +32,14 @@ router.get('/listar/:id', (req, res) => {
     res.json(productos.buscarPorId(id));
 });
 
-router.post('/guardar', (req, res) => {
+router.post('/guardar', auth, (req, res) => {
     let producto = req.body;
     res.json(productos.guardar(producto));
     let data = JSON.stringify(productos,null,2);
     fs.writeFileSync(ruta, data, 'utf-8')
 });
 
-router.put('/actualizar/:id', (req, res) => {
+router.put('/actualizar/:id', auth, (req, res) => {
     let { id } = req.params
     let producto = req.body
     res.json(productos.actualizar(id, producto));
@@ -40,7 +47,7 @@ router.put('/actualizar/:id', (req, res) => {
     fs.writeFileSync(ruta, data, 'utf-8')
 });
 
-router.delete('/borrar/:id', (req, res) => {
+router.delete('/borrar/:id', auth, (req, res) => {
     let { id } = req.params;
     res.json(productos.borrar(id));
     let data = JSON.stringify(productos,null,2);
