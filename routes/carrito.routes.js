@@ -1,12 +1,12 @@
 import express from 'express';
 import fs from 'fs';
-import Productos from '../api/productos.js';
+import Productos from '../api/carrito.js';
 const router = express.Router();
 const rutaC = './carrito.txt'
 const ruta = './productos.txt'
 
 let productos = new Productos;
-let productosCarrito = new Productos;
+let productosCarrito = [];
 
 
 async function read(rutaC) {
