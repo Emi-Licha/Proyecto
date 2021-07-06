@@ -1,15 +1,16 @@
-import express from 'express';
-import http from 'http';
-import routerprod from './routes/productos.routes.js';
-import routercar  from './routes/carrito.routes.js'
+const express = require('express');
+const routerprod = require('./routes/productos.routes.js');
+const routercar = require('./routes/carrito.routes.js');
 
-
+const http = require('http');
 const app = express();
 const server = http.Server(app);
 const PORT = 8080;
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+app.use(express.static('public'));
+
 app.use('/productos', routerprod)
 app.use('/carrito', routercar)
 

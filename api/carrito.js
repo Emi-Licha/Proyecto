@@ -1,34 +1,61 @@
-class Productos {
-
+const carritodb = require('../persistencia/carritoDB');
+const productobd = require('../persistencia/productoDB');
+class Carrito {
     constructor() {
-        this.productos = [];
+        this.count =0
+        this.id = 0
+        this.timestamp = new Date()
     }
+   guardar (idProducto){
+     this.count++
+       try {
+            carritodb.leerArchivo()
+            this.guardarProductoCarrito(idProducto)
+            return JSON.parse(carritodb.leerArchivo())
+       } catch (error) {
+           const carritoBD =[{
+            
+            producto:[]
+           }] 
+           carritodb.guardarEnArchivo(carritoBD)
+           this.guardarProductoCarrito(idProducto)
+           return JSON.parse(carritodb.leerArchivo())
+       }
 
-    listar() {
-        return this.productos;
+   }
+   listarPorId(id){
+    let carritoBD = carritodb.leerArchivo()
+    carritoBD = JSON.parse(carritoBD)
+    const carritoPorId =  carritoBD.find( carrito => carrito.id === parseInt(id));
+    return carritoPorId
+   }
+   borrar (id){
+    let carritoBD = carritodb.leerArchivo()
+    carritoBD = JSON.parse(carritoBD)
+    carritoBD = carritoBD[0]
+    const prodEliminado = carritoBD.producto.find(prodEnCarrito => prodEnCarrito.id ===  parseInt(id))
+    carritoBD.producto = carritoBD.producto.filter(prodEnCarrito => prodEnCarrito.id !=  parseInt(id))
+    const prueba = [
+        carritoBD
+    ]
+    carritodb.guardarEnArchivo(prueba)
+    return prodEliminado
     }
-
-    buscarPorId(id) {
-        let producto = this.productos.find(p => p.id === id);
-        return producto || { error: `producto con id ${id} no encontrado`};
-    }
-
-    guardar(producto) {
-        producto.id = this.productos.length + 1;
-        return this.productos.push(producto);
-    }
-
-    actualizar(id, datos) {
-        datos.id = Number(id);
-        let index = this.productos.findIndex(p => p.id === id);
-        this.productos.splice(index, 1, datos);
-        return this.productos;
-    }
-
-    borrar(id) {
-        let index = this.productos.findIndex(p => p.id === id);
-        return this.productos.splice(index, 1);
+    guardarProductoCarrito(idProducto){
+        let carritoBD = carritodb.leerArchivo()
+        carritoBD = JSON.parse(carritoBD)
+        let productoDB = productobd.leerArchivo()
+        productoDB = JSON.parse(productoDB)
+        const productoPorId =  productoDB.find( prod => prod.id === parseInt(idProducto));
+        if (carritoBD[0].producto.length >0 ){
+         carritoBD[0].producto.push(productoPorId)
+        }else{
+         carritoBD[0].producto =[
+             productoPorId
+         ]
+        }
+        carritodb.guardarEnArchivo(carritoBD)
     }
 }
 
-export default Productos
+module.exports = new Carrito();

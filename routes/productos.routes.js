@@ -1,11 +1,7 @@
-import express from 'express';
-import Productos from '../api/productos.js';
-import fs from 'fs';
+const express = require('express');
 const router = express.Router();
-const ruta = "./productos.txt";
+const productos = require('../api/productos');
 
-
-let productos = new Productos;
 
 function auth(req, res, next){
     if(req.query.admin === 'true'){
@@ -15,48 +11,34 @@ function auth(req, res, next){
     }
 }
 router.get('/listar', (req, res) => {
-    async function read(ruta) {
-        try {
-            const archivo = await fs.promises.readFile(ruta);
-            res.send(JSON.parse(archivo));
-        } catch (err) {
-            res.send("No se encontraron productos");
-        }
-    }
-    read(ruta);
-    res.json(productos.listar());
+   res.json(productos.listar())
 });
 
 router.get('/listar/:id', (req, res) => {
     let { id } = req.params;
-    res.json(productos.buscarPorId(id));
+    if(id){
+        res.json(productos.listarPorId(id))
+    }else{
+        res.json(productos.listar())
+    }
 });
 
 router.post('/guardar', auth, (req, res) => {
     let producto = req.body;
     res.json(productos.guardar(producto));
-    let data = JSON.stringify(productos,null,2);
-    fs.writeFileSync(ruta, data, 'utf-8')
 });
 
 router.put('/actualizar/:id', auth, (req, res) => {
     let { id } = req.params
     let producto = req.body
     res.json(productos.actualizar(id, producto));
-    let data = JSON.stringify(productos,null,2);
-    fs.writeFileSync(ruta, data, 'utf-8')
 });
 
 router.delete('/borrar/:id', auth, (req, res) => {
     let { id } = req.params;
     res.json(productos.borrar(id));
-    let data = JSON.stringify(productos,null,2);
-    fs.writeFileSync(ruta, data, 'utf-8')
 });
 
-router.get('/vista', (req, res) => {
-    let prods = productos.listar();
-    res.render('lista', { productos: prods, hayProductos: prods.length });
-});
 
-export default router;
+
+module.exports = router;
